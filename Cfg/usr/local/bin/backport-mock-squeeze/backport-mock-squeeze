@@ -1,0 +1,52 @@
+#!/bin/bash
+
+BUILDDIR=/root/python-mock
+URL=http://ftp.debian.org/debian/pool/main/p/python-mock
+UPSTREAM_MOCKVER=0.8.0
+
+DSC=python-mock_0.8.0-3.dsc
+ORIG_TAR_GZ=python-mock_0.8.0.orig.tar.gz
+DEB_TAR_GZ=python-mock_0.8.0-3.debian.tar.gz
+PATCH=python-mock-py3k.patch
+
+if [ ! -d ${BUILDDIR} ]
+then
+    mkdir ${BUILDDIR}
+fi
+cd ${BUILDDIR}
+
+# download all the sources
+if [ ! -f ${DSC} ]
+then
+    wget ${URL}/${DSC}
+fi
+if [ ! -f ${ORIG_TAR_GZ} ]
+then
+    wget ${URL}/${ORIG_TAR_GZ}
+fi
+if [ ! -f ${DEB_TAR_GZ} ]
+then
+    wget ${URL}/${DEB_TAR_GZ}
+fi
+
+# extract source and apply py3k patch
+dpkg-source -x ${DSC}
+cd python-mock-${UPSTREAM_MOCKVER}
+
+if [ -f ${BUILDDIR}/${PATCH} ]
+then
+    echo "Applying ${PATCH}..."
+    patch -p0 < ${BUILDDIR}/${PATCH}
+fi
+
+# build the backport
+pdebuild --architecture amd64 --buildresult ${BUILDDIR} --pbuilderroot "sudo DIST=squeeze"
+# remove the python3 build
+rm ${BUILDDIR}/python3*
+# upload the backported mock to squeeze repo
+for deb in $(ls ${BUILDDIR}/*.deb)
+do
+    reprepro --basedir /var/www/public -C stable includedeb squeeze $deb
+    reprepro --basedir /var/www/public -C testing includedeb squeeze $deb
+    reprepro --basedir /var/www/public -C unstable includedeb squeeze $deb
+done

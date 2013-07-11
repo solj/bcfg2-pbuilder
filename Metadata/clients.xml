@@ -1,0 +1,3 @@
+<Clients>
+  <Client profile="debian-repository-server" name="debian.bcfg2.org" version="1.3.2"/>
+</Clients>

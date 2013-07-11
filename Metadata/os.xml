@@ -1,0 +1,9 @@
+<!-- os.xml:
+
+     The Metadata/os.xml file is included from distros.xml. It contains
+     Group definitions that are not distro-specific.
+
+-->
+<Groups>
+  <Group name='linux' category='os'/>
+</Groups>

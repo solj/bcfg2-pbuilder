@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+
+OLD_STABLE_VERSION_REGEX='^6\.0\.[0-9]\+$'
+
+if $(grep -q "$OLD_STABLE_VERSION_REGEX" "/etc/debian_version"); then
+cat > "/etc/apt/preferences" << EOF
+Package: python-sphinx
+Pin: release a=squeeze-backports
+Pin-Priority: 999
+EOF
+fi

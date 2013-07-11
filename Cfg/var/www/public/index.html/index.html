@@ -1,0 +1,52 @@
+<html>
+<head>
+<title>Bcfg2 Debian package repository</title>
+</head>
+<body>
+<h1>Introduction</h1>
+
+<p>Bcfg2 Debian package repository</p>
+
+<h1>How to use</h1>
+
+<p>In your /etc/apt/source.list.d/bcfg2.list:
+
+<pre>
+deb http://debian.bcfg2.org YOUR_DEBIAN_VERSION_HERE RELEASE
+</pre>
+
+RELEASE will be one of the following:
+
+<br />
+<br />
+
+<small><strong>NOTE:</strong> If you use the stable release, you will want to either mirror this locally or pin your package version to prevent upgrades when new major versions (e.g. 1.3 --&gt; 1.4) are released.</small>
+
+<ul>
+<li><strong>stable:</strong> The latest stable release</li>
+<li><strong>testing:</strong> The most recent build from the <a href='https://github.com/Bcfg2/bcfg2/tree/maint'>maint branch</a></li>
+<li><strong>unstable:</strong> The most recent build from the <a href='https://github.com/Bcfg2/bcfg2/tree/master'>master branch</a></li>
+</ul>
+
+<h2>Adding the archive key to your keyring</h2>
+
+<p>This archive self-signs packages uploaded to it (and packages uploaded are
+verified against a whitelist of trusted uploaders) using GnuPG.</p>
+
+<p>The key of the archive is in the <a href="/bcfg2.gpg.key">bcfg2.gpg.key file</a>. You should add the key using something like this:</p>
+
+<pre>
+wget http://debian.bcfg2.org/bcfg2.gpg.key
+apt-key add bcfg2.gpg.key
+apt-get update
+</pre>
+
+<h2>Browsing the archive</h2>
+
+There is no interactive interface to browse the archive.
+
+<ul>
+<li>To see the list of all packages regardless of the distribution, see the <a href="/pool">pool directory</a></li>
+<li>To see the package descriptions per distribution, see the <a href="/dists">dists directory</a>
+</li>
+</html>

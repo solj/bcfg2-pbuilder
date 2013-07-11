@@ -1,0 +1,3 @@
+#/bin/bash
+
+test -d /var/cache/pbuilder/repo || echo -n "missing"

@@ -1,0 +1,107 @@
+<Bundle xmlns:py="http://genshi.edgewall.org/">
+	<!-- build scripts used to create packages -->
+	<Path name='/usr/local/bin/build-bcfg2-stable'/>
+	<Path name='/usr/local/bin/build-bcfg2-testing'/>
+	<Path name='/usr/local/bin/build-bcfg2-unstable'/>
+
+	<!-- updates the pbuilder images -->
+	<Path name='/usr/local/bin/update-pbuilder'/>
+
+	<!-- webserver configuration -->
+	<Package name='nginx-full'/>
+		<Package name='libgd2-xpm'/>
+		<Package name='ttf-dejavu-core'/>
+		<BoundService name='nginx' type='deb' status='on'/>
+	<Path name='/etc/nginx/conf.d/server_names_hash_bucket_size.conf'/>
+	<Path name='/etc/nginx/sites-available/debian.bcfg2.org'/>
+	<BoundPath type='nonexistent' name='/etc/nginx/sites-enabled/default'/>
+	<BoundPath type='symlink' name='/etc/nginx/sites-enabled/debian.bcfg2.org' to='/etc/nginx/sites-available/debian.bcfg2.org'/>
+	<BoundPath type='directory'
+	           name='/var/log/nginx/debian.bcfg2.org'
+	           owner='www-data'
+	           group='adm'
+	           mode='0750'/>
+
+        <!-- gpg keys -->
+	<Package name='gnupg-agent'/>
+	<Package name='pinentry-curses'/>
+	<BoundPath name='/root/gpg' type='directory' owner='root' group='root' mode='0700'/>
+	<Path name='/root/gpg/bcfg2-privkey.key'/>
+	<Path name='/root/gpg/bcfg2-pubkey.key'/>
+	<Path name='/root/gpg/bcfg2-revoke.key'/>
+	<py:if test="metadata.Probes['gpg'] == 'missing'">
+		<BoundAction name='01install-gpg-keys'
+			     timing='post'
+			     when='always'
+			     status='check'
+			     command='gpg --import /root/gpg/bcfg2-privkey.key; gpg --import /root/gpg/bcfg2-pubkey.key'/>
+		<BoundAction name='02export-bcfg2-gpg-key'
+			     timing='post'
+			     when='always'
+			     status='check'
+			     command='gpg --armor --export 14F04057 --output > /var/www/public/bcfg2.gpg.key'/>
+	</py:if>
+
+	<!-- reprepro -->
+	<Package name='reprepro'/>
+	<Path name='/var/www/public/index.html'/>
+	<BoundPath name='/var/www' type='directory' owner='www-data' group='www-data' mode='0755'/>
+	<BoundPath name='/var/www/public' type='directory' owner='www-data' group='www-data' mode='0755'/>
+	<BoundPath name='/var/www/public/conf' type='directory' owner='www-data' group='www-data' mode='0755'/>
+		<Path name='/var/www/public/conf/distributions'/>
+		<Path name='/var/www/public/conf/options'/>
+	<BoundPath name='/var/www/public/dists' type='directory' owner='www-data' group='www-data' mode='0755'/>
+	<BoundPath name='/var/www/public/incoming' type='directory' owner='www-data' group='www-data' mode='0755'/>
+	<BoundPath name='/var/www/public/indices' type='directory' owner='www-data' group='www-data' mode='0755'/>
+	<BoundPath name='/var/www/public/logs' type='directory' owner='www-data' group='www-data' mode='0755'/>
+	<BoundPath name='/var/www/public/pool' type='directory' owner='www-data' group='www-data' mode='0755'/>
+	<BoundPath name='/var/www/public/project' type='directory' owner='www-data' group='www-data' mode='0755'/>
+	<BoundPath name='/var/www/public/tmp' type='directory' owner='www-data' group='www-data' mode='0755'/>
+
+	<!-- pbuilder -->
+	<Package name='pbuilder'/>
+		<Package name='debootstrap'/>
+		<Package name='sudo'/>
+			<BoundService name='sudo' type='deb' status='on'/>
+		<Path name='/etc/pbuilderrc'/>
+		<Path name='/var/cache/pbuilder/hook.d/D05deps'/>
+		<Path name='/var/cache/pbuilder/hook.d/E01apt-preferences'/>
+		<Path name='/var/cache/pbuilder/hook.d/E02apt-bcfg2-key'/>
+		<Path name='/root/.pbuilderrc'/>
+		<BoundPath name='/var/cache/pbuilder/hook.d' type='directory' owner='root' group='root' mode='0755'/>
+		<BoundPath name='/var/cache/pbuilder/repo' type='directory' owner='root' group='root' mode='0777'/>
+		<py:if test="metadata.Probes['pbuilder'] == 'missing'">
+			<!-- create the pbuilder images -->
+			<BoundAction name='pbuilder-create'
+				     timing='post'
+				     when='always'
+				     status='check'
+				     command='for dist in squeeze wheezy jessie sid; do DIST=$$dist ARCH=amd64 pbuilder --create --architecture amd64 --distribution $$dist --debootstrapopts --variant=buildd; done'/>
+		</py:if>
+
+	<!-- have to backport python-mock to squeeze -->
+	<Path name='/usr/local/bin/backport-mock-squeeze'/>
+	<Path name='/root/python-mock/python-mock-py3k.patch'/>
+	<!-- generic build dependencies -->
+	<Package name='build-essential'/>
+	<Package name='config-package-dev'/>
+	<Package name='devscripts'/> <!-- provides dch -->
+	<Package name='dpkg-dev'/>
+	<Package name='fakeroot'/>
+	<Package name='libdistro-info-perl'/> <!-- inform dch of distro names -->
+	<!-- bcfg2 package build dependencies -->
+	<Package name='debhelper'/>
+	<Package name='git'/>
+	<Package name='python'/>
+	<Package name='python-cherrypy3'/>
+	<Package name='python-daemon'/>
+	<Package name='python-doc'/>
+	<Package name='python-gamin'/>
+	<Package name='python-lxml'/>
+	<Package name='python-m2crypto'/>
+	<Package name='python-mock'/>
+	<Package name='python-mock-doc'/>
+	<Package name='python-pyinotify'/>
+	<Package name='python-setuptools'/>
+	<Package name='python-sphinx'/>
+</Bundle>

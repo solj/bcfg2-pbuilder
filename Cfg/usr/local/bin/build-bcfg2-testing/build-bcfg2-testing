@@ -1,0 +1,35 @@
+#!/bin/bash
+
+VERSION=1.3.2
+DATE=$(date +%F-%H%M)
+
+# create testing directory
+TMPDIR=$(mktemp -d --suffix=bcfg2)
+TESTINGDIR=${TMPDIR}/testing
+mkdir ${TESTINGDIR}
+
+# download source
+cd ${TESTINGDIR}
+git clone -b maint git://git.mcs.anl.gov/bcfg2
+cd bcfg2
+GITID=$(git log --oneline | head -n 1 | cut -d' ' -f1)
+cp debian/changelog ../changelog.orig
+
+for dist in squeeze wheezy jessie sid
+do
+    cp ../changelog.orig debian/changelog
+    (cd debian && dch --distribution ${dist} \
+                      --force-bad-version \
+                      --preserve \
+                      --force-distribution \
+                      --newversion "${VERSION}~testing~${dist}${DATE}+${GITID}" \
+                      "bcfg2 backport for ${dist} release ${VERSION} git commit ${GITID}")
+    # set the codename (end)
+    pdebuild --architecture amd64 --buildresult ${TESTINGDIR} --pbuilderroot "sudo DIST=$dist"
+    for deb in $(ls ${TESTINGDIR}/*$dist*.deb)
+    do
+        reprepro --basedir /var/www/public -C testing includedeb $dist $deb
+    done
+done
+
+cd /tmp && rm -rf ${TMPDIR}

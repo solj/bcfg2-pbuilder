@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+OLD_STABLE_VERSION_REGEX='^6\.0\.[0-9]\+$'
+
+if $(grep -q "$OLD_STABLE_VERSION_REGEX" "/etc/debian_version"); then
+aptitude -y install wget
+wget http://debian.bcfg2.org/bcfg2.gpg.key -O - | apt-key add -
+fi

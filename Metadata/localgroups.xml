@@ -1,0 +1,7 @@
+<Groups xmlns:xi="http://www.w3.org/2001/XInclude">
+	<xi:include href="distros.xml"/>
+	<Group profile='true' name='debian-repository-server' category='profiles'>
+		<Group name='basic-server'/>
+		<Bundle name='pbuilder'/>
+	</Group>
+</Groups>

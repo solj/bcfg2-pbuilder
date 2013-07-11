@@ -1,0 +1,20 @@
+server {
+	listen			80;
+	server_name		debian.bcfg2.org;
+	access_log		/var/log/nginx/debian.bcfg2.org/access.log;
+	error_log		/var/log/nginx/debian.bcfg2.org/error.log;
+	root			/var/www/public;
+
+	location / {
+		index	index.html;
+		autoindex	on;
+	}
+
+	location ~ /(.*)/conf {
+		deny	all;
+	}
+
+	location ~ /(.*)/db {
+		deny	all;
+	}
+}

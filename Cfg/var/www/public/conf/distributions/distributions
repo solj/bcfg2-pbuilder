@@ -1,0 +1,31 @@
+Origin: Bcfg2 Maintainers
+Label: Bcfg2
+Codename: squeeze
+Architectures: amd64 source
+Components: stable testing unstable
+Description: bcfg2.org Debian packages.
+SignWith: 14F04057
+
+Origin: Bcfg2 Maintainers
+Label: Bcfg2
+Codename: wheezy
+Architectures: amd64 source
+Components: stable testing unstable
+Description: bcfg2.org Debian packages.
+SignWith: 14F04057
+
+Origin: Bcfg2 Maintainers
+Label: Bcfg2
+Codename: jessie
+Architectures: amd64 source
+Components: stable testing unstable
+Description: bcfg2.org Debian packages.
+SignWith: 14F04057
+
+Origin: Bcfg2 Maintainers
+Label: Bcfg2
+Codename: sid
+Architectures: amd64 source
+Components: stable testing unstable
+Description: bcfg2.org Debian packages.
+SignWith: 14F04057

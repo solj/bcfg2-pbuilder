@@ -1,0 +1,4 @@
+#!/bin/sh
+
+(cd /var/cache/pbuilder/repo; apt-ftparchive packages . > Packages && gzip -c Packages > Packages.gz)
+aptitude update
