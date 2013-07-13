@@ -2,15 +2,15 @@
 
 COMPONENT="unstable"
 VERSION=1.4.0
-TRY=0
+DATE=$(date +%F-%H%M)
 
 # create ${COMPONENT} directory
 TMPDIR=$(mktemp -d --suffix=bcfg2)
-UNSTABLEDIR=${TMPDIR}/${COMPONENT}
-mkdir ${UNSTABLEDIR}
+eval "DIR${!COMPONENT}=${TMPDIR}/${COMPONENT}"
+mkdir $DIR${!COMPONENT}
 
 # download source
-cd ${UNSTABLEDIR}
+cd $DIR${!COMPONENT}
 git clone git://git.mcs.anl.gov/bcfg2
 cd bcfg2
 GITID=$(git log --oneline | head -n 1 | cut -d' ' -f1)
@@ -23,11 +23,11 @@ do
                       --force-bad-version \
                       --preserve \
                       --force-distribution \
-                      --newversion "${VERSION}~${COMPONENT}~${dist}${TRY}+${GITID}" \
+                      --newversion "${VERSION}~${COMPONENT}~${dist}${DATE}+${GITID}" \
                       "bcfg2 backport for ${dist} release ${VERSION} git commit ${GITID}")
     # set the codename (end)
-    pdebuild --architecture amd64 --buildresult ${UNSTABLEDIR} --pbuilderroot "sudo DIST=$dist"
-    for deb in $(ls ${UNSTABLEDIR}/*$dist*.deb)
+    pdebuild --architecture amd64 --buildresult $DIR${!COMPONENT} --pbuilderroot "sudo DIST=$dist"
+    for deb in $(ls $DIR${!COMPONENT}/*$dist*.deb)
     do
         reprepro --basedir /var/www/public -C ${COMPONENT} includedeb $dist $deb
     done
