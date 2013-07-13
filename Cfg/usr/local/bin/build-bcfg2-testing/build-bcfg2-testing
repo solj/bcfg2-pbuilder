@@ -1,15 +1,16 @@
 #!/bin/bash
 
+COMPONENT="testing"
 VERSION=1.3.2
 DATE=$(date +%F-%H%M)
 
-# create testing directory
+# create ${COMPONENT} directory
 TMPDIR=$(mktemp -d --suffix=bcfg2)
-TESTINGDIR=${TMPDIR}/testing
-mkdir ${TESTINGDIR}
+eval "DIR${!COMPONENT}=${TMPDIR}/${COMPONENT}"
+mkdir $DIR${!COMPONENT}
 
 # download source
-cd ${TESTINGDIR}
+cd $DIR${!COMPONENT}
 git clone -b maint git://git.mcs.anl.gov/bcfg2
 cd bcfg2
 GITID=$(git log --oneline | head -n 1 | cut -d' ' -f1)
@@ -22,13 +23,13 @@ do
                       --force-bad-version \
                       --preserve \
                       --force-distribution \
-                      --newversion "${VERSION}~testing~${dist}${DATE}+${GITID}" \
+                      --newversion "${VERSION}~${COMPONENT}~${dist}${DATE}+${GITID}" \
                       "bcfg2 backport for ${dist} release ${VERSION} git commit ${GITID}")
     # set the codename (end)
-    pdebuild --architecture amd64 --buildresult ${TESTINGDIR} --pbuilderroot "sudo DIST=$dist"
-    for deb in $(ls ${TESTINGDIR}/*$dist*.deb)
+    pdebuild --architecture amd64 --buildresult $DIR${!COMPONENT} --pbuilderroot "sudo DIST=$dist"
+    for deb in $(ls $DIR${!COMPONENT}/*$dist*.deb)
     do
-        reprepro --basedir /var/www/public -C testing includedeb $dist $deb
+        reprepro --basedir /var/www/public -C ${COMPONENT} includedeb $dist $deb
     done
 done
 
