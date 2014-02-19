@@ -1,4 +1,4 @@
-<Bundle xmlns:py="http://genshi.edgewall.org/">
+<Bundle name="pbuilder" xmlns:py="http://genshi.edgewall.org/">
 	<!-- build scripts used to create packages -->
 	<Path name='/usr/local/bin/build-bcfg2-stable'/>
 	<Path name='/usr/local/bin/build-bcfg2-testing'/>
